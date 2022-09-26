@@ -75,6 +75,7 @@ for pass_index in range(0,len(data.index)):
     # calculate algorithm success rate
     success_percent = round((correct_count/passenger_count)*100, 2)
 
+
 print(f'''
 The fate of this many passengers was guessed correctly: {correct_count}
 Out of {passenger_count} passengers
