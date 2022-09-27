@@ -48,29 +48,36 @@ def train_model(inputs, Y_actuals, learning_rate, epochs):
 # prints the accuracy of a given model
 def test_model_accuracy(inputs, Y_actuals, weights):
     
+    # create count variable to hold the number of correct guesses
     correct_count = 0
     
+    # increment the count by one for each correct guess
     for idx, input in enumerate(inputs):
         if (Y_actuals[idx] == predict_one_row(input,weights)):
             correct_count += 1
     
+    # calculate accuracy and display to system
     correct_percent = 100*(correct_count/len(inputs))
-    print(f'''The weights {weights} have an accuracy of %{correct_percent}''')
+    print(f'''The weights {weights} have an accuracy of %{correct_percent}
+    
+    
+    
+    ''')
 
 
 # main method
 def main():
 
     # Read the data
-    data = pd.read_csv('separable.csv')
+    data = pd.read_csv('non-separable.csv')
 
     # separate the data by y from the inputs
-    y_actuals = np.array(data['obese'])
-    inputs = np.array(data.drop(columns=['obese']))
+    y_actuals = np.array(data['hired'])
+    inputs = np.array(data.drop(columns=['hired']))
     
     # run the algorithm on the training data
-    weights = train_model(inputs,y_actuals,0.1,30)
-    print(weights)
+    weights = train_model(inputs,y_actuals,0.1,20)
+    print(f'Final weights: {weights}')
 
     # test the model on the test data
     test_model_accuracy(inputs,y_actuals,weights)
