@@ -79,7 +79,7 @@ def main():
     weights = train_model(inputs,y_actuals,0.1,20)
     print(f'Final weights: {weights}')
 
-    # test the model on the test data
+    # test the model on the data
     test_model_accuracy(inputs,y_actuals,weights)
 
 # execution
