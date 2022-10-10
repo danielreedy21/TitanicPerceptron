@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from numpy.random import seed
 import random
 
 # IMPLEMENTATION FROM TEXTBOOK
@@ -42,6 +43,8 @@ class AdalineGD(object):
 
         """
         self.w_ = np.zeros(1 + X.shape[1])
+        # for idx, weight in enumerate(self.w_):
+        #     self.w_[idx]= random.random()*2 - 1
         self.cost_ = []
 
         for i in range(self.n_iter):
@@ -70,8 +73,7 @@ class AdalineGD(object):
 
     def predict(self, X):
         """Return class label after unit step"""
-        return np.where(self.activation(X) >= 0.0, 0, 1)
-
+        return np.where(self.activation(X) >= 0.0, 1, 0)
 
 
 
@@ -83,6 +85,9 @@ def transform_data(data: pd.DataFrame):
     data["PassengerId"] = 0
     data["Cabin"] = 0
     
+    # transform Pclass
+    data["Pclass"] = data["Pclass"]/3
+
     # transform sex
     data["Sex"] = np.where(data["Sex"] == "male", 0, 1)
 
@@ -110,6 +115,15 @@ def transform_data(data: pd.DataFrame):
     data_as_numpy = data.to_numpy()
     return data_as_numpy
 
+def display_accuracy(y_pred, y, TestOrTrain: str):
+    num_correct_predictions = (y_pred == y).sum()
+    accuracy = round((num_correct_predictions / y.shape[0]) * 100,2)
+
+    print(f'''
+    Correctly classified {TestOrTrain}ing samples: {num_correct_predictions} out of {y.shape[0]}
+    The model has an accuracy of {accuracy}%
+    ''')
+
 
 
 def main():
@@ -131,7 +145,8 @@ def main():
 
 
     # train the model on training data
-    adal = AdalineGD(n_iter=1000, eta=0.0002)
+    # adal = AdalineGD(n_iter=1000, eta=0.0002853)
+    adal = AdalineGD(n_iter=1000, eta=0.00028)
     adal.fit(train_data,train_answers)
     print(f'''
     Weights from fitting the model on the training data:
@@ -142,42 +157,25 @@ def main():
 
     # see accuracy on the training data
     y_pred = adal.predict(train_data)
-    num_correct_predictions = (y_pred == train_answers).sum()
-    accuracy = (num_correct_predictions / train_answers.shape[0]) * 100
-
-    print(f'''
-    Correctly classified training samples: {num_correct_predictions}
-    The model has an accuracy of {accuracy}%
-    ''')
-
-
+    display_accuracy(y_pred, train_answers, "train")
+    
     # see accuracy on the testing data
     y_pred = adal.predict(test_data.astype(np.float64))
-    num_correct_predictions = (y_pred == test_answers).sum()
-    accuracy = (num_correct_predictions / test_answers.shape[0]) * 100
+    display_accuracy(y_pred, test_answers, "test")
 
-    print(f'''
-    Correctly classified testing samples: {num_correct_predictions}
-    The model has an accuracy of {accuracy}%
-    ''')
+
+
 
     # CREATE AND PREDICT WITH RANDOM WEIGHTS
     for idx, weight in enumerate(adal.w_):
-        adal.w_[idx]= random.random()
+        adal.w_[idx]= random.random()*2 - 1
     print(f'''
     Weights from randomization:
     {adal.w_}
     ''')
 
     y_pred = adal.predict(test_data.astype(np.float64))
-    num_correct_predictions = (y_pred == test_answers).sum()
-    accuracy = (num_correct_predictions / test_answers.shape[0]) * 100
-
-    print(f'''
-    Correctly classified testing samples: {num_correct_predictions}
-    The model has an accuracy of {accuracy}%
-    ''')
-
+    display_accuracy(y_pred, test_answers, "test")
 
 
 
